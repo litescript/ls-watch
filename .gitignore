@@ -1,0 +1,59 @@
+# ============================================================
+# ls-watch — Git ignore rules
+# ============================================================
+
+# Build outputs
+/build/
+/out/
+/dist/
+
+# Compiled objects and libraries
+*.o
+*.a
+*.so
+*.d
+
+# ARM firmware artifacts
+*.elf
+*.bin
+*.hex
+*.uf2
+*.map
+*.lst
+
+# Debugging and coverage artifacts
+*.gcda
+*.gcno
+*.gcov
+*.profraw
+*.profdata
+core
+core.*
+
+# Compilation databases and editor caches
+compile_commands.json
+.cache/
+.clangd-index/
+
+# Editor temporary files
+*.swp
+*.swo
+*~
+*.tmp
+*.bak
+
+# Python test artifacts
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Local environment files
+.env
+.env.local
+
+# Vendored/external emulator builds
+/tools/pinetime-emu/
+
+# Local source archives
+*.tar.gz
+*.tgz
