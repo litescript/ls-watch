@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := all
 
-.PHONY: all deps deps-dry-run check run clean size disasm tar
+.PHONY: all deps deps-dry-run check run clean size disasm tar compdb
 
 CROSS   := arm-none-eabi-
 CC      := $(CROSS)gcc
@@ -80,5 +80,11 @@ tar:
 
 clean:
 	rm -rf $(BUILD_DIR)
+
+# Generate compile_commands.json for clangd.
+# -B ensures Make executes the compilation commands even if
+# the object files are already up to date.
+compdb:
+	bear -- $(MAKE) -B all
 
 -include $(OBJECTS:.o=.d)

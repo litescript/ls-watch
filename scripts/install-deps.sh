@@ -15,6 +15,7 @@ PACKAGES=(
   ninja
   sdl2
   git
+  bear
 )
 
 DRY_RUN=0

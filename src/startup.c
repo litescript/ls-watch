@@ -19,26 +19,26 @@ const uintptr_t vector_table[55] = {
 };
 
 void Reset_Handler(void) {
-  const uint32_t *src = &_sidata;
-  uint32_t *dst = &_sdata;
+    const uint32_t *src = &_sidata;
+    uint32_t *dst = &_sdata;
 
-  // copy flash to RAM to initialize .data
-  while (dst < &_edata) {
-    *dst++ = *src++;
-  }
+    // copy flash to RAM to initialize .data
+    while (dst < &_edata) {
+        *dst++ = *src++;
+    }
 
-  // initialize .bss by zeroing it out explicitly
-  uint32_t *bssStart = &_sbss;
-  while (bssStart < &_ebss) {
-    *bssStart++ = 0;
-  }
+    // initialize .bss by zeroing it out explicitly
+    uint32_t *bssStart = &_sbss;
+    while (bssStart < &_ebss) {
+        *bssStart++ = 0;
+    }
 
-  main();
-  Default_Handler();
+    main();
+    Default_Handler();
 }
 
 void Default_Handler(void) {
-  for (;;) {
-    __asm__ volatile("bkpt #0");
-  }
+    for (;;) {
+        __asm__ volatile("bkpt #0");
+    }
 }
