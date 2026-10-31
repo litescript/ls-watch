@@ -62,6 +62,7 @@ check:
 	@command -v cmake
 	@command -v ninja
 	@command -v git
+	@command -v bear
 	@echo "Tool checks passed."
 
 run: $(BUILD_DIR)/$(TARGET).bin
