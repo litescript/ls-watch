@@ -76,7 +76,10 @@ disasm: $(BUILD_DIR)/$(TARGET).elf
 	$(OBJDUMP) -d -S $<
 
 tar:
-	tar --exclude=.git --exclude=build \
+	tar --exclude=.git \
+	    --exclude=build \
+	    --exclude=compile_commands.json \
+	    --exclude=.cache \
 	    -czf ../$(TARGET)-source.tar.gz .
 
 clean:

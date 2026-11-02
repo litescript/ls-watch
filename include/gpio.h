@@ -32,5 +32,6 @@ void gpio_set(uint32_t pin);
 void gpio_clear(uint32_t pin);
 void gpio_config_output(uint32_t pin);
 uint32_t gpio_read(uint32_t pin);
+void gpio_config_input(uint32_t pin);
 
 #endif
