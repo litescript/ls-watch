@@ -1,5 +1,6 @@
+#include "display.h"
 #include "gpio.h"
-#include "spi.h"
+// #include "spi.h"
 #include <stdint.h>
 
 volatile uint32_t initialized_value = 0xABADBABE;
@@ -11,9 +12,7 @@ int main(void) {
         __asm__ volatile("bkpt #0");
     }
 
-    // initialize SPI and write a byte to it
-    spi_init();
-    spi_write(0xA5u);
+    display_init();
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
