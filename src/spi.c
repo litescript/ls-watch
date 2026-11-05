@@ -16,7 +16,7 @@ void spi_init(void) {
 }
 
 void spi_write(uint8_t byte) {
-    uint8_t tx_byte = byte;
+    volatile uint8_t tx_byte = byte; // this must be volatile or things disappear
 
     SPIM0_EVENTS_END = 0u;
     SPIM0_TXD_PTR = (uint32_t)(uintptr_t)&tx_byte;

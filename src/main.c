@@ -13,6 +13,7 @@ int main(void) {
     }
 
     display_init();
+    display_draw_pixel(120u, 120u, 0xF800u);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
