@@ -1,6 +1,6 @@
+/* main.c */
 #include "display.h"
 #include "gpio.h"
-// #include "spi.h"
 #include <stdint.h>
 
 volatile uint32_t initialized_value = 0xABADBABE;

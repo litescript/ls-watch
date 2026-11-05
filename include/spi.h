@@ -1,3 +1,4 @@
+/* spi.h */
 #ifndef LS_WATCH_SPI_H
 #define LS_WATCH_SPI_H
 
@@ -34,5 +35,6 @@
 
 void spi_init(void);
 void spi_write(uint8_t byte);
+void spi_write_buffer(volatile const uint8_t *data, uint16_t length);
 
 #endif

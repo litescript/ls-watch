@@ -1,3 +1,4 @@
+/* spi.c */
 #include "spi.h"
 #include "gpio.h"
 #include <stdint.h>
@@ -25,5 +26,20 @@ void spi_write(uint8_t byte) {
 
     while (SPIM0_EVENTS_END == 0u) {
         // wait for EasyDMA to finish
+    }
+}
+
+void spi_write_buffer(volatile const uint8_t *data, uint16_t length) {
+    if (length == 0) {
+        return;
+    }
+
+    SPIM0_EVENTS_END = 0u;
+    SPIM0_TXD_PTR = (uint32_t)(uintptr_t)data;
+    SPIM0_TXD_MAXCNT = length;
+    SPIM0_TASKS_START = 1u;
+
+    while (SPIM0_EVENTS_END == 0u) {
+        // wait for transfer to finish
     }
 }
