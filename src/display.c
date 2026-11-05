@@ -23,6 +23,14 @@
  * All four pins are outputs from the nRF52832.
  */
 
+void display_begin(void) {
+    gpio_clear(25); // CS LOW: select the display
+}
+
+void display_end(void) {
+    gpio_set(25); // CS HIGH: deselect the display
+}
+
 void display_init_pins(void) {
     // configure display control pins as outputs
     gpio_config_output(18); // D/C
@@ -107,10 +115,16 @@ void display_draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
     display_end();
 }
 
-void display_begin(void) {
-    gpio_clear(25); // CS LOW: select the display
-}
-
-void display_end(void) {
-    gpio_set(25); // CS HIGH: deselect the display
+void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) {
+    if (width == 0u || height == 0u) {
+        return;
+    }
+    uint32_t area = (uint32_t)width * height;
+    display_set_window(x, y, (x + width - 1u), (y + height - 1u));
+    display_begin();
+    display_write_command(ST7789_CMD_RAMWR);
+    for (uint32_t fill = 0; fill < area; fill++) {
+        display_write_color(color);
+    }
+    display_end();
 }
