@@ -172,3 +172,11 @@ void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
 void display_clear(uint16_t color) {
     display_fill_rect(0, 0, 240, 240, color);
 }
+
+void display_draw_hline(uint16_t x, uint16_t y, uint16_t length, uint16_t color) {
+    display_fill_rect(x, y, length, 1, color);
+}
+
+void display_draw_vline(uint16_t x, uint16_t y, uint16_t length, uint16_t color) {
+    display_fill_rect(x, y, 1, length, color);
+}

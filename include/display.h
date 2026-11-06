@@ -19,5 +19,8 @@ void display_begin(void);
 void display_end(void);
 void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color);
 void display_clear(uint16_t color);
+void display_draw_hline(uint16_t x, uint16_t y, uint16_t length, uint16_t color);
+void display_draw_vline(uint16_t x, uint16_t y, uint16_t length, uint16_t color);
+void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color);
 
 #endif
