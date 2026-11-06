@@ -13,6 +13,7 @@ int main(void) {
     }
 
     display_init();
+    display_clear(0x001Fu);
     display_fill_rect(100u, 100u, 20u, 20u, 0xF800u);
     display_fill_rect(20u, 100u, 20u, 20u, 0x07E0u);
     display_fill_rect(100u, 20u, 20u, 20u, 0x001Fu);

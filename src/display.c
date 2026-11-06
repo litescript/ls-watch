@@ -168,3 +168,7 @@ void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     display_end();
     // we're pretty much done here
 }
+
+void display_clear(uint16_t color) {
+    display_fill_rect(0, 0, 240, 240, color);
+}
