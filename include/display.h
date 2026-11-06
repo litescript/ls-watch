@@ -2,6 +2,9 @@
 #ifndef LS_WATCH_DISPLAY_H
 #define LS_WATCH_DISPLAY_H
 
+#define DISPLAY_WIDTH 240u
+#define DISPLAY_HEIGHT 240u
+
 #include <stdint.h>
 
 void display_init_pins(void);

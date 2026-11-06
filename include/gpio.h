@@ -1,6 +1,7 @@
 /* gpio.h */
 #ifndef LS_WATCH_GPIO_H
 #define LS_WATCH_GPIO_H
+#include <stdbool.h>
 #include <stdint.h>
 
 #define GPIO_BASE 0x50000000u
@@ -34,5 +35,6 @@ void gpio_clear(uint32_t pin);
 void gpio_config_output(uint32_t pin);
 uint32_t gpio_read(uint32_t pin);
 void gpio_config_input(uint32_t pin);
+void gpio_config_output_initial(uint32_t pin, bool initial_high);
 
 #endif

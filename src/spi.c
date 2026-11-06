@@ -4,9 +4,8 @@
 #include <stdint.h>
 
 void spi_init(void) {
-    gpio_config_output(2);
-    gpio_set(2);
-    gpio_config_output(3);
+    gpio_config_output_initial(2u, true);  // SCK: idle HIGH (SPI mode 3)
+    gpio_config_output_initial(3u, false); // MOSI: initially LOW
 
     SPIM0_CONFIG = SPIM_CONFIG_CPHA | SPIM_CONFIG_CPOL;
     SPIM0_FREQUENCY = SPIM_FREQUENCY_1M;

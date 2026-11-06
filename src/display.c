@@ -13,9 +13,12 @@
 #define ST7789_CMD_RASET 0x2Bu
 #define ST7789_CMD_RAMWR 0x2Cu
 
+#define DC_PIN 18
+#define CS_PIN 25
+#define RESET_PIN 26
+#define BACKLIGHT_PIN 23
+
 #define DISPLAY_BUFFER_SIZE 128u
-#define DISPLAY_WIDTH 240u
-#define DISPLAY_HEIGHT 240u
 
 static volatile uint8_t pixel_buffer[DISPLAY_BUFFER_SIZE];
 
@@ -31,41 +34,36 @@ static volatile uint8_t pixel_buffer[DISPLAY_BUFFER_SIZE];
  */
 
 void display_begin(void) {
-    gpio_clear(25); // CS LOW: select the display
+    gpio_clear(CS_PIN); // CS LOW: select the display
 }
 
 void display_end(void) {
-    gpio_set(25); // CS HIGH: deselect the display
+    gpio_set(CS_PIN); // CS HIGH: deselect the display
 }
 
 void display_init_pins(void) {
     // configure display control pins as outputs
-    gpio_config_output(18); // D/C
-    gpio_config_output(25); // CS
-    gpio_config_output(26); // RESET
-    gpio_config_output(23); // BACKLIGHT
-
-    // establish initial idle states
-    gpio_set(25); // deselect display
-    gpio_set(26); // release hardware reset
-    gpio_set(23); // keep backlight off
+    gpio_config_output_initial(DC_PIN, false);       // D/C
+    gpio_config_output_initial(CS_PIN, true);        // CS
+    gpio_config_output_initial(RESET_PIN, true);     // RESET
+    gpio_config_output_initial(BACKLIGHT_PIN, true); // BACKLIGHT
 }
 
 void display_write_command(uint8_t command) {
-    gpio_clear(18);     // D/C LOW: command follows
+    gpio_clear(DC_PIN); // D/C LOW: command follows
     spi_write(command); // transmit command byte
 }
 
 void display_write_data(uint8_t data) {
-    gpio_set(18);    // D/C HIGH: data follows
-    spi_write(data); // transmit data byte
+    gpio_set(DC_PIN); // D/C HIGH: data follows
+    spi_write(data);  // transmit data byte
 }
 
 void display_hardware_reset(void) {
-    gpio_clear(26); // RESET LOW: hold ST7789 in hardware reset
-    delay_ms(20);   // maintain reset for 20 ms
-    gpio_set(26);   // RESET HIGH: release display from reset
-    delay_ms(150);  // allow display controller to recover
+    gpio_clear(RESET_PIN); // RESET LOW: hold ST7789 in hardware reset
+    delay_ms(20);          // maintain reset for 20 ms
+    gpio_set(RESET_PIN);   // RESET HIGH: release display from reset
+    delay_ms(150);         // allow display controller to recover
 }
 
 void display_init(void) {
@@ -90,7 +88,7 @@ void display_init(void) {
     display_begin();
     display_write_command(ST7789_CMD_DISPON); // 0x29: turn the display output on
     display_end();
-    gpio_clear(23); // BACKLIGHT LOW: enable illumination
+    gpio_clear(BACKLIGHT_PIN); // BACKLIGHT LOW: enable illumination
 }
 
 void display_write_color(uint16_t color) {
@@ -115,6 +113,10 @@ void display_set_window(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1) {
 }
 
 void display_draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
+    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT) {
+        return;
+    }
+
     display_set_window(x, y, x, y);
     display_begin();
     display_write_command(ST7789_CMD_RAMWR);
@@ -153,7 +155,7 @@ void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     display_set_window(x, y, (x + width - 1u), (y + height - 1u));
     display_begin();
     display_write_command(ST7789_CMD_RAMWR);
-    gpio_set(18); // D/C HIGH: pixel data follows
+    gpio_set(DC_PIN); // D/C HIGH: pixel data follows
 
     // transmit in chunks until complete
     while (bytes > 0u) {

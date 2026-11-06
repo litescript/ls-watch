@@ -1,5 +1,6 @@
 /* gpio.c */
 #include "gpio.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 void gpio_set(uint32_t pin) {
@@ -10,10 +11,18 @@ void gpio_clear(uint32_t pin) {
     GPIO_OUTCLR = GPIO_PIN_MASK(pin);
 }
 
-void gpio_config_output(uint32_t pin) {
-    gpio_clear(pin);
+void gpio_config_output_initial(uint32_t pin, bool initial_high) {
+    if (initial_high) {
+        gpio_set(pin);
+    } else {
+        gpio_clear(pin);
+    }
     GPIO_PIN_CNF(pin) = GPIO_CNF_DIR_OUTPUT | GPIO_CNF_INPUT_DISCONNECT | GPIO_CNF_PULL_DISABLE;
     GPIO_DIRSET = GPIO_PIN_MASK(pin);
+}
+
+void gpio_config_output(uint32_t pin) {
+    gpio_config_output_initial(pin, false);
 }
 
 void gpio_config_input(uint32_t pin) {
