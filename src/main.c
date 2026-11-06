@@ -16,6 +16,9 @@ int main(void) {
     display_fill_rect(100u, 100u, 20u, 20u, 0xF800u);
     display_fill_rect(20u, 100u, 20u, 20u, 0x07E0u);
     display_fill_rect(100u, 20u, 20u, 20u, 0x001Fu);
+    // edge tests
+    display_fill_rect(230u, 230u, 30u, 30u, 0xFFE0u);
+    display_fill_rect(250u, 250u, 20u, 20u, 0xFFFFu);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);

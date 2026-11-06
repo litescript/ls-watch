@@ -13,6 +13,8 @@
 #define ST7789_CMD_RAMWR 0x2Cu
 
 #define DISPLAY_BUFFER_SIZE 128u
+#define DISPLAY_WIDTH 240u
+#define DISPLAY_HEIGHT 240u
 
 static volatile uint8_t pixel_buffer[DISPLAY_BUFFER_SIZE];
 
@@ -122,6 +124,19 @@ void display_draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
 void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) {
     if (width == 0u || height == 0u) {
         return;
+    }
+    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT) {
+        return;
+    }
+
+    uint16_t available_width = DISPLAY_WIDTH - x;
+    uint16_t available_height = DISPLAY_HEIGHT - y;
+
+    if (available_width < width) {
+        width = available_width;
+    }
+    if (available_height < height) {
+        height = available_height;
     }
 
     uint32_t area = (uint32_t)width * height;
