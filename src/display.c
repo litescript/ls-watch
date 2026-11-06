@@ -1,3 +1,4 @@
+/* display.c */
 #include "display.h"
 #include "gpio.h"
 #include "spi.h"

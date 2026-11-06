@@ -1,3 +1,4 @@
+/* timer.h */
 #ifndef LS_WATCH_TIMER_H
 #define LS_WATCH_TIMER_H
 

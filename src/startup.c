@@ -1,3 +1,4 @@
+/* startup.c */
 #include <stdint.h>
 
 extern uint32_t _estack;
@@ -11,8 +12,7 @@ void Reset_Handler(void);
 void Default_Handler(void);
 extern int main(void);
 
-__attribute__((used, section(".isr_vector")))
-const uintptr_t vector_table[55] = {
+__attribute__((used, section(".isr_vector"))) const uintptr_t vector_table[55] = {
     [0] = (uintptr_t)&_estack,
     [1] = (uintptr_t)Reset_Handler,
     [2 ... 54] = (uintptr_t)Default_Handler,

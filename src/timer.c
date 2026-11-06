@@ -1,3 +1,4 @@
+/* timer.c */
 #include "timer.h"
 #include <stdint.h>
 
