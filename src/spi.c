@@ -1,7 +1,10 @@
 /* spi.c */
 #include "spi.h"
 #include "gpio.h"
+#include <stddef.h>
 #include <stdint.h>
+
+#define SPIM0_MAX_TRANSFER 255u
 
 void spi_init(void) {
     gpio_config_output_initial(2u, true);  // SCK: idle HIGH (SPI mode 3)
@@ -29,16 +32,23 @@ void spi_write(uint8_t byte) {
 }
 
 void spi_write_buffer(volatile const uint8_t *data, uint16_t length) {
-    if (length == 0) {
+    if (data == NULL || length == 0u) {
         return;
     }
 
-    SPIM0_EVENTS_END = 0u;
-    SPIM0_TXD_PTR = (uint32_t)(uintptr_t)data;
-    SPIM0_TXD_MAXCNT = length;
-    SPIM0_TASKS_START = 1u;
+    uint16_t remaining = length;
 
-    while (SPIM0_EVENTS_END == 0u) {
-        // wait for transfer to finish
+    while (remaining > 0) {
+        uint16_t chunk = (remaining >= SPIM0_MAX_TRANSFER) ? SPIM0_MAX_TRANSFER : remaining;
+        SPIM0_EVENTS_END = 0u;
+        SPIM0_TXD_PTR = (uint32_t)(uintptr_t)data;
+        SPIM0_TXD_MAXCNT = chunk;
+        SPIM0_TASKS_START = 1u;
+
+        while (SPIM0_EVENTS_END == 0u) {
+            // wait for transfer to finish
+        }
+        data += chunk;
+        remaining -= chunk;
     }
 }
