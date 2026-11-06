@@ -12,6 +12,10 @@
 #define ST7789_CMD_RASET 0x2Bu
 #define ST7789_CMD_RAMWR 0x2Cu
 
+#define DISPLAY_BUFFER_SIZE 128u
+
+static volatile uint8_t pixel_buffer[DISPLAY_BUFFER_SIZE];
+
 /*
  * PineTime ST7789 display control pins
  *
@@ -119,12 +123,30 @@ void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
     if (width == 0u || height == 0u) {
         return;
     }
+
     uint32_t area = (uint32_t)width * height;
+    uint32_t bytes = area * 2u;
+
+    // fill the buffer
+    for (uint32_t i = 0; i < DISPLAY_BUFFER_SIZE / 2u; i++) {
+        pixel_buffer[2 * i] = (uint8_t)(color >> 8);
+        pixel_buffer[2 * i + 1] = (uint8_t)(color & 0xFFu);
+    }
+
+    // prep the display
     display_set_window(x, y, (x + width - 1u), (y + height - 1u));
     display_begin();
     display_write_command(ST7789_CMD_RAMWR);
-    for (uint32_t fill = 0; fill < area; fill++) {
-        display_write_color(color);
+    gpio_set(18); // D/C HIGH: pixel data follows
+
+    // transmit in chunks until complete
+    while (bytes > 0u) {
+        uint32_t chunk = (bytes >= DISPLAY_BUFFER_SIZE) ? DISPLAY_BUFFER_SIZE : bytes;
+
+        spi_write_buffer(pixel_buffer, (uint16_t)chunk);
+        bytes -= chunk;
     }
+
     display_end();
+    // we're pretty much done here
 }
