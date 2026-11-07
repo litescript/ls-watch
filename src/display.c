@@ -189,10 +189,24 @@ void display_draw_vline(uint16_t x, uint16_t y, uint16_t length,
 
 void display_void_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
                        uint16_t color) {
+    if (width == 0 || height == 0) {
+        return;
+    }
+    if (x >= DISPLAY_WIDTH || y >= DISPLAY_HEIGHT) {
+        return;
+    }
+
+    uint32_t right = (uint32_t)x + width - 1u;
+    uint32_t bottom = (uint32_t)y + height - 1u;
+
     display_draw_hline(x, y, width, color);
-    display_draw_hline(x, y + height, width, color);
+    if (bottom < DISPLAY_HEIGHT) {
+        display_draw_hline(x, (uint16_t)bottom, width, color);
+    }
     display_draw_vline(x, y, height, color);
-    display_draw_vline(x + width, y, height + 1, color);
+    if (right < DISPLAY_WIDTH) {
+        display_draw_vline((uint16_t)right, y, height, color);
+    }
 }
 
 void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,

@@ -13,6 +13,7 @@ int main(void) {
     }
 
     display_init();
+    // get crazy with the cheez-whiz
     display_clear(0x001Fu);
     display_fill_rect(100u, 100u, 20u, 20u, 0xF800u);
     display_fill_rect(20u, 100u, 20u, 20u, 0x07E0u);
@@ -36,6 +37,9 @@ int main(void) {
     display_draw_line(210u, 30u, 180u, 210u, 0x07FFu);
     // empty rectangle
     display_void_rect(40u, 40u, 100u, 40u, 0xCCCCu);
+    display_void_rect(140u, 110u, 20u, 80u, 0x0000u);
+    display_void_rect(10u, 220u, 20u, 180u, 0x0000u);
+    display_void_rect(210u, 220u, 200u, 180u, 0x0000u);
     // circle time
     display_draw_circle(180u, 180u, 55u, 0xFC0Au);
     display_draw_circle(10u, 10u, 55u, 0xFC0Au);
