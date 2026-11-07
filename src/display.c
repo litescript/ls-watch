@@ -3,6 +3,7 @@
 #include "gpio.h"
 #include "spi.h"
 #include "timer.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 #define ST7789_CMD_SLPOUT 0x11u
@@ -218,5 +219,44 @@ void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
             error += dx;
             y += sy;
         }
+    }
+}
+
+static void display_plot_checked(int32_t x, int32_t y, uint16_t color) {
+    if (x < 0 || y < 0 || x >= (int32_t)DISPLAY_WIDTH ||
+        y >= (int32_t)DISPLAY_HEIGHT) {
+        return;
+    }
+
+    display_draw_pixel((uint16_t)x, (uint16_t)y, color);
+}
+
+static void display_circle_points(int32_t cx, int32_t cy, int32_t x, int32_t y,
+                                  uint16_t color) {
+    display_plot_checked(cx + x, cy + y, color);
+    display_plot_checked(cx - x, cy + y, color);
+    display_plot_checked(cx + x, cy - y, color);
+    display_plot_checked(cx - x, cy - y, color);
+    display_plot_checked(cx + y, cy + x, color);
+    display_plot_checked(cx - y, cy + x, color);
+    display_plot_checked(cx + y, cy - x, color);
+    display_plot_checked(cx - y, cy - x, color);
+}
+
+void display_draw_circle(uint16_t cx, uint16_t cy, uint16_t radius,
+                         uint16_t color) {
+    int32_t x = 0;
+    int32_t y = radius;
+    int32_t decision = 1 - (int32_t)radius;
+
+    while (x <= y) {
+        display_circle_points(cx, cy, x, y, color);
+        if (decision < 0) {
+            decision += 2 * x + 3;
+        } else {
+            decision += 2 * (x - y) + 5;
+            y--;
+        }
+        x++;
     }
 }

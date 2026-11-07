@@ -36,6 +36,10 @@ int main(void) {
     display_draw_line(210u, 30u, 180u, 210u, 0x07FFu);
     // empty rectangle
     display_void_rect(40u, 40u, 100u, 40u, 0xCCCCu);
+    // circle time
+    display_draw_circle(180u, 180u, 55u, 0xFC0Au);
+    display_draw_circle(10u, 10u, 55u, 0xFC0Au);
+    display_draw_circle(180u, 180u, 100u, 0xFC0Au);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
