@@ -180,3 +180,29 @@ void display_draw_hline(uint16_t x, uint16_t y, uint16_t length, uint16_t color)
 void display_draw_vline(uint16_t x, uint16_t y, uint16_t length, uint16_t color) {
     display_fill_rect(x, y, 1, length, color);
 }
+
+void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color) {
+    int32_t x = x0;
+    int32_t y = y0;
+    int32_t dx = (x1 >= x0) ? (int32_t)x1 - x0 : (int32_t)x0 - x1;
+    int32_t dy = (y1 >= y0) ? (int32_t)y1 - y0 : (int32_t)y0 - y1;
+    int32_t sx = (x0 < x1) ? 1 : -1;
+    int32_t sy = (y0 < y1) ? 1 : -1;
+    int32_t error = dx - dy;
+
+    for (;;) {
+        display_draw_pixel((uint16_t)x, (uint16_t)y, color);
+        if (x == x1 && y == y1) {
+            break;
+        }
+        int32_t e2 = 2 * error;
+        if (e2 > -dy) {
+            error -= dy;
+            x += sx;
+        }
+        if (e2 < dx) {
+            error += dx;
+            y += sy;
+        }
+    }
+}

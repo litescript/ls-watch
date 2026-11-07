@@ -16,10 +16,24 @@ int main(void) {
     display_clear(0x001Fu);
     display_fill_rect(100u, 100u, 20u, 20u, 0xF800u);
     display_fill_rect(20u, 100u, 20u, 20u, 0x07E0u);
-    display_fill_rect(100u, 20u, 20u, 20u, 0x001Fu);
+    display_fill_rect(100u, 20u, 20u, 20u, 0x0C3Cu);
     // edge tests
     display_fill_rect(230u, 230u, 30u, 30u, 0xFFE0u);
     display_fill_rect(250u, 250u, 20u, 20u, 0xFFFFu);
+    // simple line test
+    display_draw_line(20u, 20u, 200u, 100u, 0xFFFFu);
+    // complex line test
+    display_draw_line(120u, 120u, 220u, 120u, 0xFFFFu); // right
+    display_draw_line(120u, 120u, 220u, 220u, 0xFFFFu); // down-right
+    display_draw_line(120u, 120u, 120u, 220u, 0xFFFFu); // down
+    display_draw_line(120u, 120u, 20u, 220u, 0xFFFFu);  // down-left
+    display_draw_line(120u, 120u, 20u, 120u, 0xFFFFu);  // left
+    display_draw_line(120u, 120u, 20u, 20u, 0xFFFFu);   // up-left
+    display_draw_line(120u, 120u, 120u, 20u, 0xFFFFu);  // up
+    display_draw_line(120u, 120u, 220u, 20u, 0xFFFFu);  // up-right
+    // steep line test
+    display_draw_line(30u, 30u, 60u, 210u, 0xFFE0u);
+    display_draw_line(210u, 30u, 180u, 210u, 0x07FFu);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
