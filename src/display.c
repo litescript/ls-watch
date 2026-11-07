@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 /* display.c */
 #include "display.h"
 #include "gpio.h"

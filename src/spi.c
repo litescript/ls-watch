@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 /* spi.c */
 #include "spi.h"
 #include "gpio.h"

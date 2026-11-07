@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 /* timer.c */
 #include "timer.h"
 #include <stdint.h>

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 /* display.h */
 #ifndef LS_WATCH_DISPLAY_H
 #define LS_WATCH_DISPLAY_H

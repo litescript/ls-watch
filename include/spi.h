@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 /* spi.h */
 #ifndef LS_WATCH_SPI_H
 #define LS_WATCH_SPI_H

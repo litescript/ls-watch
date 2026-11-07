@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: MPL-2.0
 /* gpio.c */
 #include "gpio.h"
 #include <stdbool.h>
