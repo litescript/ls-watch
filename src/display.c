@@ -257,7 +257,7 @@ static void display_circle_points(int32_t cx, int32_t cy, int32_t x, int32_t y,
     display_plot_checked(cx - y, cy - x, color);
 }
 
-void display_draw_circle(uint16_t cx, uint16_t cy, uint16_t radius,
+void display_void_circle(uint16_t cx, uint16_t cy, uint16_t radius,
                          uint16_t color) {
     int32_t x = 0;
     int32_t y = radius;
@@ -271,6 +271,54 @@ void display_draw_circle(uint16_t cx, uint16_t cy, uint16_t radius,
             decision += 2 * (x - y) + 5;
             y--;
         }
+        x++;
+    }
+}
+
+static void display_cline_checked(int32_t x, int32_t y, int32_t length,
+                                  uint16_t color) {
+    if (length <= 0 || y < 0 || x >= (int32_t)DISPLAY_WIDTH ||
+        y >= (int32_t)DISPLAY_HEIGHT) {
+        return;
+    }
+    if (x < 0) {
+        length += x;
+        x = 0;
+    }
+    if (x + length > (int32_t)DISPLAY_WIDTH) {
+        length = (int32_t)DISPLAY_WIDTH - x;
+    }
+    if (length <= 0) {
+        return;
+    }
+
+    display_draw_hline(x, y, length, color);
+}
+
+static void display_cfill_lines(int32_t cx, int32_t cy, int32_t x, int32_t y,
+                                uint16_t color) {
+    display_cline_checked(cx - x, cy + y, 2 * x + 1, color);
+    display_cline_checked(cx - x, cy - y, 2 * x + 1, color);
+    display_cline_checked(cx - y, cy + x, 2 * y + 1, color);
+    display_cline_checked(cx - y, cy - x, 2 * y + 1, color);
+}
+
+void display_fill_circle(uint16_t cx, uint16_t cy, uint16_t radius,
+                         uint16_t color) {
+    int32_t x = 0;
+    int32_t y = radius;
+    int32_t decision = 1 - (int32_t)radius;
+
+    while (x <= y) {
+        display_cfill_lines(cx, cy, x, y, color);
+
+        if (decision < 0) {
+            decision += 2 * x + 3;
+        } else {
+            decision += 2 * (x - y) + 5;
+            y--;
+        }
+
         x++;
     }
 }
