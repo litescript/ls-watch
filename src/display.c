@@ -186,6 +186,14 @@ void display_draw_vline(uint16_t x, uint16_t y, uint16_t length,
     display_fill_rect(x, y, 1, length, color);
 }
 
+void display_void_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+                       uint16_t color) {
+    display_draw_hline(x, y, width, color);
+    display_draw_hline(x, y + height, width, color);
+    display_draw_vline(x, y, height, color);
+    display_draw_vline(x + width, y, height + 1, color);
+}
+
 void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
                        uint16_t color) {
     int32_t x = x0;

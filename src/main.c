@@ -34,6 +34,8 @@ int main(void) {
     // steep line test
     display_draw_line(30u, 30u, 60u, 210u, 0xFFE0u);
     display_draw_line(210u, 30u, 180u, 210u, 0x07FFu);
+    // empty rectangle
+    display_void_rect(40u, 40u, 100u, 40u, 0xCCCCu);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
