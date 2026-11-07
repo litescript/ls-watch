@@ -86,7 +86,8 @@ void display_init(void) {
 
     // enable the display and its illumination
     display_begin();
-    display_write_command(ST7789_CMD_DISPON); // 0x29: turn the display output on
+    display_write_command(
+        ST7789_CMD_DISPON); // 0x29: turn the display output on
     display_end();
     gpio_clear(BACKLIGHT_PIN); // BACKLIGHT LOW: enable illumination
 }
@@ -124,7 +125,8 @@ void display_draw_pixel(uint16_t x, uint16_t y, uint16_t color) {
     display_end();
 }
 
-void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint16_t color) {
+void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height,
+                       uint16_t color) {
     if (width == 0u || height == 0u) {
         return;
     }
@@ -159,7 +161,8 @@ void display_fill_rect(uint16_t x, uint16_t y, uint16_t width, uint16_t height, 
 
     // transmit in chunks until complete
     while (bytes > 0u) {
-        uint32_t chunk = (bytes >= DISPLAY_BUFFER_SIZE) ? DISPLAY_BUFFER_SIZE : bytes;
+        uint32_t chunk =
+            (bytes >= DISPLAY_BUFFER_SIZE) ? DISPLAY_BUFFER_SIZE : bytes;
 
         spi_write_buffer(pixel_buffer, (uint16_t)chunk);
         bytes -= chunk;
@@ -173,15 +176,18 @@ void display_clear(uint16_t color) {
     display_fill_rect(0, 0, 240, 240, color);
 }
 
-void display_draw_hline(uint16_t x, uint16_t y, uint16_t length, uint16_t color) {
+void display_draw_hline(uint16_t x, uint16_t y, uint16_t length,
+                        uint16_t color) {
     display_fill_rect(x, y, length, 1, color);
 }
 
-void display_draw_vline(uint16_t x, uint16_t y, uint16_t length, uint16_t color) {
+void display_draw_vline(uint16_t x, uint16_t y, uint16_t length,
+                        uint16_t color) {
     display_fill_rect(x, y, 1, length, color);
 }
 
-void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t color) {
+void display_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                       uint16_t color) {
     int32_t x = x0;
     int32_t y = y0;
     int32_t dx = (x1 >= x0) ? (int32_t)x1 - x0 : (int32_t)x0 - x1;
