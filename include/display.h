@@ -33,5 +33,8 @@ void display_void_circle(uint16_t cx, uint16_t cy, uint16_t radius,
                          uint16_t color);
 void display_fill_circle(uint16_t cx, uint16_t cy, uint16_t radius,
                          uint16_t color);
-
+void display_void_triangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                           uint16_t x2, uint16_t y2, uint16_t color);
+void display_fill_triangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                           uint16_t x2, uint16_t y2, uint16_t color);
 #endif

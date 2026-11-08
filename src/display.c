@@ -323,3 +323,101 @@ void display_fill_circle(uint16_t cx, uint16_t cy, uint16_t radius,
         x++;
     }
 }
+
+static int32_t display_interp_x(int32_t x0, int32_t y0, int32_t x1, int32_t y1,
+                                int32_t y) {
+    // determining where at row y edge crosses x
+    if (y1 == y0) {
+        return x0;
+    }
+
+    return x0 + (int32_t)(((int64_t)(x1 - x0) * (y - y0)) / (y1 - y0));
+}
+
+void display_void_triangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                           uint16_t x2, uint16_t y2, uint16_t color) {
+    display_draw_line(x0, y0, x1, y1, color);
+    display_draw_line(x1, y1, x2, y2, color);
+    display_draw_line(x2, y2, x0, y0, color);
+}
+
+void display_fill_triangle(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1,
+                           uint16_t x2, uint16_t y2, uint16_t color) {
+    // sort the y's, keeping their accompanying x's with them
+    uint16_t temp;
+    if (y0 > y1) {
+        temp = y1;
+        y1 = y0;
+        y0 = temp;
+        temp = x1;
+        x1 = x0;
+        x0 = temp;
+    }
+    if (y1 > y2) {
+        temp = y2;
+        y2 = y1;
+        y1 = temp;
+        temp = x2;
+        x2 = x1;
+        x1 = temp;
+    }
+    // we gotta check again to make sure they're in order
+    if (y0 > y1) {
+        temp = y1;
+        y1 = y0;
+        y0 = temp;
+        temp = x1;
+        x1 = x0;
+        x0 = temp;
+    }
+
+    // all thre points on same horizontal line?
+    if (y0 == y2) {
+        uint16_t min_x = x0;
+        uint16_t max_x = x0;
+
+        if (x1 < min_x)
+            min_x = x1;
+        if (x2 < min_x)
+            min_x = x2;
+        if (x1 > max_x)
+            max_x = x1;
+        if (x2 > max_x)
+            max_x = x2;
+
+        display_cline_checked(min_x, y0, (int32_t)(max_x - min_x + 1u), color);
+        return;
+    }
+
+    // top half, y0 -> y1
+    if (y0 != y1) {
+        for (int32_t y = y0; y <= (int32_t)y1; y++) {
+            int32_t xa = display_interp_x(x0, y0, x1, y1, y);
+            int32_t xb = display_interp_x(x0, y0, x2, y2, y);
+
+            if (xa > xb) {
+                int32_t swap = xa;
+                xa = xb;
+                xb = swap;
+            }
+
+            display_cline_checked(xa, y, xb - xa + 1, color);
+        }
+    }
+
+    // bottom half, y1 -> y2
+    if (y1 != y2) {
+        for (int32_t y = y1; y <= (int32_t)y2; y++) {
+            int32_t xa = display_interp_x(x1, y1, x2, y2, y);
+            int32_t xb = display_interp_x(x0, y0, x2, y2, y);
+
+            if (xa > xb) {
+                int32_t swap = xa;
+                xa = xb;
+                xb = swap;
+            }
+
+            display_cline_checked(xa, y, xb - xa + 1, color);
+        }
+    }
+}

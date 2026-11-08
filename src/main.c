@@ -46,6 +46,39 @@ int main(void) {
     display_void_circle(10u, 10u, 55u, 0xFC0Au);
     display_void_circle(180u, 180u, 100u, 0xFC0Au);
     display_fill_circle(120u, 120u, 70u, 0xF800u);
+    // triangles
+    display_void_triangle(10u, 10u, 120u, 130u, 20u, 200u, 0xC0F3u);
+
+    // clean up the mess to test distinct triangles
+    display_clear(0x001Fu);
+    // Conventional triangle
+    display_fill_triangle(120, 20, 40, 110, 200, 110, 0xF800u);
+    // Flat-top triangle
+    display_fill_triangle(40, 130, 110, 130, 75, 220, 0x07E0u);
+    // Flat-bottom triangle
+    display_fill_triangle(150, 130, 220, 210, 130, 210, 0xFFE0u);
+    // Outline triangle
+    display_void_triangle(120, 40, 30, 210, 210, 210, 0xFFFFu);
+
+    // clear again for degens from upstate
+    display_clear(0x001Fu);
+    // One point
+    display_fill_triangle(120, 120, 120, 120, 120, 120, 0xFFFFu);
+    // Horizontal line
+    display_fill_triangle(40, 80, 180, 80, 100, 80, 0xFFE0u);
+    // Vertical line
+    display_fill_triangle(80, 40, 80, 120, 80, 200, 0x07E0u);
+    // Two coincident vertices
+    display_fill_triangle(120, 40, 120, 40, 180, 180, 0xF800u);
+    // Partially offscreen
+    display_fill_triangle(120, 40, 20, 300, 220, 300, 0x07FFu);
+    // Completely offscreen
+    display_fill_triangle(300, 300, 350, 300, 325, 350, 0xFFFFu);
+
+    // some really fucked up triangles
+    display_clear(0x001Fu);
+    display_fill_triangle(300u, 20u, 20u, 300u, 300u, 300u, 0x07E0u);
+    display_fill_triangle(300u, 300u, 350u, 300u, 325u, 350u, 0xF800u);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
