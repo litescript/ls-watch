@@ -5,6 +5,7 @@
 
 #include <stdint.h>
 
-static void font_draw_A(uint16_t x, uint16_t y, uint16_t color);
+void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color);
+void font_draw_string(uint16_t x, uint16_t y, const char *string, uint16_t color);
 
 #endif
