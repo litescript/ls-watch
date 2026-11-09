@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
+// big ass character struct
 static const uint8_t font_5x7[26][7] = {
     // A
     {0b01110, 0b10001, 0b10001, 0b11111, 0b10001, 0b10001, 0b10001},
