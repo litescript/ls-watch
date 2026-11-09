@@ -6,6 +6,8 @@
 #include <stdint.h>
 
 #define WHITE 0xFFFFu
+#define GREEN 0x07E0u
+#define YELLOW 0xFFE0u
 
 volatile uint32_t initialized_value = 0xABADBABE;
 volatile uint32_t zeroed_value;
@@ -21,8 +23,8 @@ int main(void) {
     display_clear(0x0000u); // black screen
     // FONT TIME!
     font_draw_string(20u, 40u, "HELLO WORLD", WHITE);
-    font_draw_string(20u, 60u, "HENDERSON", 0x07E0u);
-    font_draw_string(20u, 80u, "THE BOYS IN THE LAB", 0xFFE0u);
+    font_draw_string(20u, 60u, "HENDERSON", GREEN);
+    font_draw_string(20u, 80u, "THE BOYS IN THE LAB", YELLOW);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
