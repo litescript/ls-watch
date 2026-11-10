@@ -25,6 +25,8 @@ int main(void) {
     font_draw_string(20u, 40u, "HELLO WORLD", WHITE);
     font_draw_string(20u, 60u, "HENDERSON", GREEN);
     font_draw_string(20u, 80u, "THE BOYS IN THE LAB", YELLOW);
+    font_draw_string(20u, 100u, "IT IS 12:45 PM", WHITE);
+    font_draw_string(20u, 120u, "DO YOU KNOW WHERE YOUR INTERN IS?", YELLOW);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);

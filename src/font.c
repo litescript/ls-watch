@@ -62,16 +62,77 @@ static const uint8_t font_5x7[26][7] = {
     {0b11111, 0b00001, 0b00010, 0b00100, 0b01000, 0b10000, 0b11111},
 };
 
+// numerals 0-9
+static const uint8_t font_digits_5x7[10][7] = {
+    // 0
+    {0b01110, 0b10001, 0b10011, 0b10101,
+     0b11001, 0b10001, 0b01110},
+
+    // 1
+    {0b00100, 0b01100, 0b00100, 0b00100,
+     0b00100, 0b00100, 0b01110},
+
+    // 2
+    {0b01110, 0b10001, 0b00001, 0b00010,
+     0b00100, 0b01000, 0b11111},
+
+    // 3
+    {0b11110, 0b00001, 0b00001, 0b01110,
+     0b00001, 0b00001, 0b11110},
+
+    // 4
+    {0b00010, 0b00110, 0b01010, 0b10010,
+     0b11111, 0b00010, 0b00010},
+
+    // 5
+    {0b11111, 0b10000, 0b10000, 0b11110,
+     0b00001, 0b00001, 0b11110},
+
+    // 6
+    {0b01110, 0b10000, 0b10000, 0b11110,
+     0b10001, 0b10001, 0b01110},
+
+    // 7
+    {0b11111, 0b00001, 0b00010, 0b00100,
+     0b01000, 0b01000, 0b01000},
+
+    // 8
+    {0b01110, 0b10001, 0b10001, 0b01110,
+     0b10001, 0b10001, 0b01110},
+
+    // 9
+    {0b01110, 0b10001, 0b10001, 0b01111,
+     0b00001, 0b00001, 0b01110},
+};
+
+// :
+static const uint8_t font_colon_5x7[7] = {
+    0b00000,
+    0b00100,
+    0b00100,
+    0b00000,
+    0b00100,
+    0b00100,
+    0b00000,
+};
+
 void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color) {
-    if (character < 'A' || character > 'Z') {
+    const uint8_t *glyph = NULL;
+
+    if (character >= 'A' && character <= 'Z') {
+        glyph = font_5x7[character - 'A'];
+    } else if (character >= '0' && character <= '9') {
+        glyph = font_digits_5x7[character - '0'];
+    } else if (character == ':') {
+        glyph = font_colon_5x7;
+    } else {
         return;
     }
-    uint8_t glyph_index = (uint8_t)(character - 'A');
 
     for (uint8_t row = 0; row < 7; row++) {
         for (uint8_t column = 0; column < 5; column++) {
             uint8_t mask = (uint8_t)(1u << (4u - column));
-            if (font_5x7[glyph_index][row] & mask) {
+            if (glyph[row] & mask) {
                 display_draw_pixel(x + column, y + row, color);
             }
         }
