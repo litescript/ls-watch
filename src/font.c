@@ -116,7 +116,11 @@ static const uint8_t font_colon_5x7[7] = {
     0b00000,
 };
 
-void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color) {
+void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color, uint8_t scale) {
+    if (scale == 0) {
+        return;
+    }
+
     const uint8_t *glyph = NULL;
 
     if (character >= 'A' && character <= 'Z') {
@@ -133,13 +137,16 @@ void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color) {
         for (uint8_t column = 0; column < 5; column++) {
             uint8_t mask = (uint8_t)(1u << (4u - column));
             if (glyph[row] & mask) {
-                display_draw_pixel(x + column, y + row, color);
+                display_fill_rect(x + column * scale, y + row * scale, scale, scale, color);
             }
         }
     }
 }
 
-void font_draw_string(uint16_t x, uint16_t y, const char *string, uint16_t color) {
+void font_draw_string(uint16_t x, uint16_t y, const char *string, uint16_t color, uint8_t scale) {
+    if (scale == 0) {
+        return;
+    }
     size_t index = 0u;
     uint32_t adv = 0u;
 
@@ -148,8 +155,8 @@ void font_draw_string(uint16_t x, uint16_t y, const char *string, uint16_t color
             return;
         }
 
-        font_draw_char(x + adv, y, string[index], color);
-        adv += 6u;
+        font_draw_char(x + adv, y, string[index], color, scale);
+        adv += 6u * scale;
         index++;
     }
 }

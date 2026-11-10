@@ -22,11 +22,11 @@ int main(void) {
     // get crazy with the cheez-whiz
     display_clear(0x0000u); // black screen
     // FONT TIME!
-    font_draw_string(20u, 40u, "HELLO WORLD", WHITE);
-    font_draw_string(20u, 60u, "HENDERSON", GREEN);
-    font_draw_string(20u, 80u, "THE BOYS IN THE LAB", YELLOW);
-    font_draw_string(20u, 100u, "IT IS 12:45 PM", WHITE);
-    font_draw_string(20u, 120u, "DO YOU KNOW WHERE YOUR INTERN IS?", YELLOW);
+    font_draw_string(20u, 40u, "HELLO WORLD", WHITE, 1);
+    font_draw_string(20u, 60u, "HENDERSON", GREEN, 3);
+    font_draw_string(20u, 120u, "THE BOYS IN THE LAB", YELLOW, 1);
+    font_draw_string(20u, 140u, "IT IS 12:45 PM", WHITE, 2);
+    font_draw_string(20u, 180u, "DO YOU KNOW WHERE YOUR INTERN IS", YELLOW, 1);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
