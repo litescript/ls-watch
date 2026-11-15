@@ -3,6 +3,7 @@
 #ifndef FONT_H
 #define FONT_H
 
+#include "rtc.h"
 #include <stdint.h>
 
 typedef struct {
@@ -18,6 +19,8 @@ void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color,
 void font_draw_string(uint16_t x, uint16_t y, const char *string,
                       uint16_t color, uint8_t scale);
 void font_draw_uint(uint16_t x, uint16_t y, uint32_t number, uint16_t color,
+                    uint8_t scale);
+void font_draw_time(ClockTime *time, uint16_t x, uint16_t y, uint16_t color,
                     uint8_t scale);
 
 #endif

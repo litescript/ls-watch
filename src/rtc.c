@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 /* rtc.c */
+#include "rtc.h"
 #include <stdint.h>
 
 #define RTC1_BASE 0x40011000u
@@ -24,11 +25,45 @@ void rtc_init(void) {
     }
 
     RTC1_TASKS_STOP = 1u;
-    RTC1_PRESCALER = 0u; // not magic number, based on 32.768 Hz LFCLK / 8
+    RTC1_PRESCALER = 4095u; // 32768 / (4095 + 1) = 8 Hz
     RTC1_TASKS_CLEAR = 1u;
     RTC1_TASKS_START = 1u;
 }
 
 uint32_t rtc_get_ticks(void) {
     return RTC1_COUNTER;
+}
+
+void rtc_stop(void) {
+    RTC1_TASKS_STOP = 1u;
+}
+
+void rtc_start(void) {
+    RTC1_TASKS_START = 1u;
+}
+
+void rtc_clear(void) {
+    RTC1_TASKS_CLEAR = 1u;
+}
+
+void clock_update(ClockTime *clock, uint32_t elapsed_ticks) {
+    uint32_t total_ticks = clock->partial_ticks + elapsed_ticks;
+    uint32_t remaining_ticks = total_ticks % 8u;
+
+    uint32_t whole_seconds = total_ticks / 8u;
+    uint32_t total_seconds = clock->seconds + whole_seconds;
+    uint32_t whole_minutes = total_seconds / 60u;
+    uint32_t remaining_seconds = total_seconds % 60u;
+
+    uint32_t total_minutes = clock->minutes + whole_minutes;
+    uint32_t whole_hours = total_minutes / 60u;
+    uint32_t remaining_minutes = total_minutes % 60u;
+
+    uint32_t total_hours = clock->hours + whole_hours;
+    uint32_t remaining_hours = total_hours % 24u;
+
+    clock->partial_ticks = remaining_ticks;
+    clock->seconds = remaining_seconds;
+    clock->minutes = remaining_minutes;
+    clock->hours = remaining_hours;
 }

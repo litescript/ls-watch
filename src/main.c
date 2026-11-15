@@ -20,27 +20,37 @@ int main(void) {
         __asm__ volatile("bkpt #0");
     }
 
+    delay_ms(1u);
     display_init();
     // get crazy with the cheez-whiz
     display_clear(0x0000u); // black screen
-    // FONT TIME!
-    font_draw_string(20u, 40u, "HELLO WORLD", WHITE, 1);
-    font_draw_string(20u, 60u, "HENDERSON", GREEN, 3);
-    font_draw_string(20u, 120u, "THE BOYS IN THE LAB", YELLOW, 1);
-    font_draw_string(20u, 140u, "IT IS 12:45 PM", WHITE, 2);
-    font_draw_string(20u, 180u, "DO YOU KNOW WHERE YOUR INTERN IS", YELLOW, 1);
+
+    ClockTime test = {
+        .hours = 23u,
+        .minutes = 59u,
+        .seconds = 59u,
+        .partial_ticks = 0u,
+    };
+    clock_update(&test, 8u);
+    font_draw_time(&test, 20u, 20u, WHITE, 2u);
+
+    ClockTime test2 = {12, 45, 0, 5};
+    clock_update(&test2, 6u);
+    font_draw_time(&test2, 20u, 60u, WHITE, 2u);
+    font_draw_uint(20u, 90u, test2.partial_ticks, WHITE, 2u);
 
     // time keeping?
-    rtc_init();
-    uint32_t t0 = rtc_get_ticks();
-    delay_ms(2000);
-    uint32_t t1 = rtc_get_ticks();
-    delay_ms(2000);
-    uint32_t t2 = rtc_get_ticks();
-
-    font_draw_string(20u, 200u, "ELAPSED TICKS:", WHITE, 1u);
-    font_draw_uint(20u, 220u, t1 - t0, WHITE, 2u);
-    font_draw_uint(100u, 220u, t2 - t1, WHITE, 2u);
+    // rtc_init();
+    //
+    // font_draw_string(20u, 70u, "ELAPSED:", YELLOW, 1);
+    //
+    // uint32_t before = rtc_get_ticks();
+    // delay_ms(2000u);
+    // uint32_t after = rtc_get_ticks();
+    //
+    // uint32_t elapsed = (after - before) & 0xFFFFFFu;
+    //
+    // font_draw_uint(20u, 100u, elapsed, WHITE, 1);
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);

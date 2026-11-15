@@ -2,6 +2,7 @@
 /* font.c */
 #include "font.h"
 #include "display.h"
+#include "rtc.h"
 
 #include <stddef.h>
 #include <stdint.h>
@@ -148,6 +149,24 @@ void font_draw_uint(uint16_t x, uint16_t y, uint32_t number, uint16_t color,
     };
 
     printdec(&cursor, number);
+}
+
+static void font_draw_two_digits(uint16_t x, uint16_t y, uint8_t value,
+                                 uint16_t color, uint8_t scale) {
+    font_draw_char(x, y, '0' + (value / 10u), color, scale);
+    font_draw_char(x + 6u * scale, y, '0' + (value % 10u), color, scale);
+}
+
+void font_draw_time(ClockTime *time, uint16_t x, uint16_t y, uint16_t color,
+                    uint8_t scale) {
+    if (scale == 0u) {
+        return;
+    }
+    font_draw_two_digits(x, y, time->hours, color, scale);
+    font_draw_char(x + 12u * scale, y, ':', color, scale);
+    font_draw_two_digits(x + 18u * scale, y, time->minutes, color, scale);
+    font_draw_char(x + 30u * scale, y, ':', color, scale);
+    font_draw_two_digits(x + 36u * scale, y, time->seconds, color, scale);
 }
 
 void font_draw_char(uint16_t x, uint16_t y, char character, uint16_t color,
