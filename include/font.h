@@ -22,5 +22,6 @@ void font_draw_uint(uint16_t x, uint16_t y, uint32_t number, uint16_t color,
                     uint8_t scale);
 void font_draw_time(ClockTime *time, uint16_t x, uint16_t y, uint16_t color,
                     uint8_t scale);
-
+void font_draw_two_digits(uint16_t x, uint16_t y, uint8_t value, uint16_t color,
+                          uint8_t scale);
 #endif

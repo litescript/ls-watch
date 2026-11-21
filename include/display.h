@@ -8,6 +8,12 @@
 
 #include <stdint.h>
 
+typedef struct {
+    uint8_t hours;
+    uint8_t minutes;
+    uint8_t seconds;
+} DisplayTime;
+
 void display_init_pins(void);
 void display_write_command(uint8_t command);
 void display_write_data(uint8_t data);

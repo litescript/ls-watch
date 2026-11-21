@@ -11,6 +11,10 @@
 #define YELLOW 0xFFE0u
 #define BLACK 0x0000u
 
+#define CLOCK_X 20u
+#define CLOCK_Y 20u
+#define DISP_SCALE 2u
+
 volatile uint32_t initialized_value = 0xABADBABE;
 volatile uint32_t zeroed_value;
 
@@ -26,21 +30,9 @@ int main(void) {
     // get crazy with the cheez-whiz
     display_clear(BLACK); // black screen
 
-    // ClockTime test = {
-    //     .hours = 23u,
-    //     .minutes = 59u,
-    //     .seconds = 59u,
-    //     .partial_ticks = 0u,
-    // };
-    // clock_update(&test, 8u);
-    // font_draw_time(&test, 20u, 20u, WHITE, 2u);
-    //
-    // ClockTime test2 = {12, 45, 0, 5};
-    // clock_update(&test2, 6u);
-    // font_draw_time(&test2, 20u, 60u, WHITE, 2u);
-    // font_draw_uint(20u, 90u, test2.partial_ticks, WHITE, 2u);
-
     ClockTime sys_clock = {0, 0, 0, 0};
+    DisplayTime dis_clock = {0, 0, 0};
+    font_draw_time(&sys_clock, CLOCK_X, CLOCK_Y, WHITE, DISP_SCALE);
     uint32_t mask = 0xFFFFFFu;
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
@@ -56,14 +48,29 @@ int main(void) {
         }
         uint32_t current_ticks = rtc_get_ticks();
         uint32_t elapsed_ticks = current_ticks - previous_ticks;
-        uint8_t seconds_before = sys_clock.seconds;
         elapsed_ticks &= mask;
         clock_update(&sys_clock, elapsed_ticks);
         previous_ticks = current_ticks;
-        uint8_t seconds_after = sys_clock.seconds;
-        if ((seconds_after - seconds_before) != 0) {
-            display_clear(BLACK);
-            font_draw_time(&sys_clock, 20u, 20u, WHITE, 2u);
+        if (sys_clock.seconds != dis_clock.seconds) {
+            display_fill_rect(CLOCK_X + (6 * (6 * DISP_SCALE)), CLOCK_Y,
+                              2 * (6 * DISP_SCALE), 7 * DISP_SCALE, BLACK);
+            font_draw_two_digits(CLOCK_X + (6 * (6 * DISP_SCALE)), CLOCK_Y,
+                                 sys_clock.seconds, WHITE, DISP_SCALE);
+            dis_clock.seconds = sys_clock.seconds;
+        }
+        if (sys_clock.minutes != dis_clock.minutes) {
+            display_fill_rect(CLOCK_X + (3 * (6 * DISP_SCALE)), CLOCK_Y,
+                              2 * (6 * DISP_SCALE), 7 * DISP_SCALE, BLACK);
+            font_draw_two_digits(CLOCK_X + (3 * (6 * DISP_SCALE)), CLOCK_Y,
+                                 sys_clock.minutes, WHITE, DISP_SCALE);
+            dis_clock.minutes = sys_clock.minutes;
+        }
+        if (sys_clock.hours != dis_clock.hours) {
+            display_fill_rect(CLOCK_X, CLOCK_Y, 2 * (6 * DISP_SCALE),
+                              7 * DISP_SCALE, BLACK);
+            font_draw_two_digits(CLOCK_X, CLOCK_Y, sys_clock.hours, WHITE,
+                                 DISP_SCALE);
+            dis_clock.hours = sys_clock.hours;
         }
     }
 }
