@@ -4,7 +4,6 @@
 #include "font.h"
 #include "gpio.h"
 #include "rtc.h"
-#include "timer.h"
 #include <stdint.h>
 
 #define WHITE 0xFFFFu
@@ -15,12 +14,13 @@ volatile uint32_t initialized_value = 0xABADBABE;
 volatile uint32_t zeroed_value;
 
 int main(void) {
+    rtc_init();
+    uint32_t previous_ticks = rtc_get_ticks();
     // make sure our RAM contains what we want
     if (initialized_value != 0xABADBABE || zeroed_value != 0) {
         __asm__ volatile("bkpt #0");
     }
 
-    delay_ms(1u);
     display_init();
     // get crazy with the cheez-whiz
     display_clear(0x0000u); // black screen
@@ -39,18 +39,8 @@ int main(void) {
     font_draw_time(&test2, 20u, 60u, WHITE, 2u);
     font_draw_uint(20u, 90u, test2.partial_ticks, WHITE, 2u);
 
-    // time keeping?
-    // rtc_init();
-    //
-    // font_draw_string(20u, 70u, "ELAPSED:", YELLOW, 1);
-    //
-    // uint32_t before = rtc_get_ticks();
-    // delay_ms(2000u);
-    // uint32_t after = rtc_get_ticks();
-    //
-    // uint32_t elapsed = (after - before) & 0xFFFFFFu;
-    //
-    // font_draw_uint(20u, 100u, elapsed, WHITE, 1);
+    ClockTime sys_clock = {0, 0, 0, 0};
+    uint32_t mask = 0xFFFFFFu;
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
     gpio_config_output(15);
@@ -62,6 +52,16 @@ int main(void) {
         int pin_result = gpio_read(13);
         if (pin_result == 1) {
             __asm__ volatile("bkpt #0");
+        }
+        uint32_t current_ticks = rtc_get_ticks();
+        uint32_t elapsed_ticks = current_ticks - previous_ticks;
+        uint8_t seconds_before = sys_clock.seconds;
+        elapsed_ticks &= mask;
+        clock_update(&sys_clock, elapsed_ticks);
+        previous_ticks = current_ticks;
+        uint8_t seconds_after = sys_clock.seconds;
+        if ((seconds_after - seconds_before) != 0) {
+            // update the display
         }
     }
 }
