@@ -1,4 +1,4 @@
-# PineTime Custom Firmware & OS
+# PineTime Custom Firmware in C
 
 ### Work in progress!
 
