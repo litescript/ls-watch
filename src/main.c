@@ -9,6 +9,7 @@
 #define WHITE 0xFFFFu
 #define GREEN 0x07E0u
 #define YELLOW 0xFFE0u
+#define BLACK 0x0000u
 
 volatile uint32_t initialized_value = 0xABADBABE;
 volatile uint32_t zeroed_value;
@@ -23,21 +24,21 @@ int main(void) {
 
     display_init();
     // get crazy with the cheez-whiz
-    display_clear(0x0000u); // black screen
+    display_clear(BLACK); // black screen
 
-    ClockTime test = {
-        .hours = 23u,
-        .minutes = 59u,
-        .seconds = 59u,
-        .partial_ticks = 0u,
-    };
-    clock_update(&test, 8u);
-    font_draw_time(&test, 20u, 20u, WHITE, 2u);
-
-    ClockTime test2 = {12, 45, 0, 5};
-    clock_update(&test2, 6u);
-    font_draw_time(&test2, 20u, 60u, WHITE, 2u);
-    font_draw_uint(20u, 90u, test2.partial_ticks, WHITE, 2u);
+    // ClockTime test = {
+    //     .hours = 23u,
+    //     .minutes = 59u,
+    //     .seconds = 59u,
+    //     .partial_ticks = 0u,
+    // };
+    // clock_update(&test, 8u);
+    // font_draw_time(&test, 20u, 20u, WHITE, 2u);
+    //
+    // ClockTime test2 = {12, 45, 0, 5};
+    // clock_update(&test2, 6u);
+    // font_draw_time(&test2, 20u, 60u, WHITE, 2u);
+    // font_draw_uint(20u, 90u, test2.partial_ticks, WHITE, 2u);
 
     ClockTime sys_clock = {0, 0, 0, 0};
     uint32_t mask = 0xFFFFFFu;
@@ -61,7 +62,8 @@ int main(void) {
         previous_ticks = current_ticks;
         uint8_t seconds_after = sys_clock.seconds;
         if ((seconds_after - seconds_before) != 0) {
-            // update the display
+            display_clear(BLACK);
+            font_draw_time(&sys_clock, 20u, 20u, WHITE, 2u);
         }
     }
 }
