@@ -4,6 +4,10 @@
 
 Playing around with cheap, wearable embedded development.
 
+### Current status:
+
+Boots on real PineTime hardware! Clock counts, wraps, and has dirty-region character drawing.
+
 ## Acknowledgments
 
 Special thanks to [Weichwolf](https://github.com/Weichwolf) for developing [pinetime-emu](https://github.com/Weichwolf/pinetime-emu), an ARM Cortex-M4F and nRF52832 emulator for the PineTime.
