@@ -53,9 +53,7 @@ Boots on real PineTime hardware! Clock counts, wraps, and has dirty-region chara
 
 [Pine64](https://pine64.org/) for the [PineTime](https://pine64.org/devices/pinetime/) hardware this whole project is based around! *(not a sponsor!)*
 
-Special thanks to [Weichwolf](https://github.com/Weichwolf) for developing [pinetime-emu](https://github.com/Weichwolf/pinetime-emu), an ARM Cortex-M4F and nRF52832 emulator for the PineTime.
-
-This project has been invaluable for developing and testing ls-watch firmware without requiring physical hardware for every iteration.
+Special thanks to [Weichwolf](https://github.com/Weichwolf) for developing [pinetime-emu](https://github.com/Weichwolf/pinetime-emu), an ARM Cortex-M4F and nRF52832 emulator for the PineTime. This project has been invaluable for developing and testing ls-watch firmware without requiring physical hardware for every iteration.
 
 ## License
 
