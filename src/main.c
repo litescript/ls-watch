@@ -2,7 +2,7 @@
 /* main.c */
 #include "display.h"
 #include "font.h"
-#include "gpio.h"
+// #include "gpio.h"
 #include "rtc.h"
 #include <stdint.h>
 
@@ -36,16 +36,16 @@ int main(void) {
     uint32_t mask = 0xFFFFFFu;
 
     // assuming the loop exits when we expect, we get here, to configure GPIO
-    gpio_config_output(15);
-    gpio_set(15);
-    gpio_config_input(13);
+    // gpio_config_output(15);
+    // gpio_set(15);
+    // gpio_config_input(13);
 
     // wait for spacebar, then send interrupt to close the emulator
     for (;;) {
-        int pin_result = gpio_read(13);
-        if (pin_result == 1) {
-            __asm__ volatile("bkpt #0");
-        }
+        // int pin_result = gpio_read(13);
+        // if (pin_result == 1) {
+        //     __asm__ volatile("bkpt #0");
+        // }
         uint32_t current_ticks = rtc_get_ticks();
         uint32_t elapsed_ticks = current_ticks - previous_ticks;
         elapsed_ticks &= mask;
