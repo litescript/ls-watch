@@ -2,7 +2,11 @@
 /* main.c */
 #include "display.h"
 #include "font.h"
-// #include "gpio.h"
+
+#ifdef EMULATOR
+#include "gpio.h"
+#endif
+
 #include "rtc.h"
 #include <stdint.h>
 
@@ -21,10 +25,12 @@ volatile uint32_t zeroed_value;
 int main(void) {
     rtc_init();
     uint32_t previous_ticks = rtc_get_ticks();
+#ifdef EMULATOR
     // make sure our RAM contains what we want
     if (initialized_value != 0xABADBABE || zeroed_value != 0) {
         __asm__ volatile("bkpt #0");
     }
+#endif
 
     display_init();
     // get crazy with the cheez-whiz
@@ -35,17 +41,22 @@ int main(void) {
     font_draw_time(&sys_clock, CLOCK_X, CLOCK_Y, WHITE, DISP_SCALE);
     uint32_t mask = 0xFFFFFFu;
 
-    // assuming the loop exits when we expect, we get here, to configure GPIO
-    // gpio_config_output(15);
-    // gpio_set(15);
-    // gpio_config_input(13);
+// assuming the loop exits when we expect, we get here, to configure GPIO
+#ifdef EMULATOR
+    gpio_config_output(15);
+    gpio_set(15);
+    gpio_config_input(13);
+#endif
 
     // wait for spacebar, then send interrupt to close the emulator
     for (;;) {
-        // int pin_result = gpio_read(13);
-        // if (pin_result == 1) {
-        //     __asm__ volatile("bkpt #0");
-        // }
+#ifdef EMULATOR
+        int pin_result = gpio_read(13);
+        if (pin_result == 1) {
+            __asm__ volatile("bkpt #0");
+        }
+#endif
+
         uint32_t current_ticks = rtc_get_ticks();
         uint32_t elapsed_ticks = current_ticks - previous_ticks;
         elapsed_ticks &= mask;

@@ -40,9 +40,10 @@ void Reset_Handler(void) {
 }
 
 void Default_Handler(void) {
-    // for (;;) {
-    //     __asm__ volatile("bkpt #0");
-    // }
-
-    // for hardware test, do literally nothing
+    for (;;) {
+#ifdef EMULATOR
+        __asm__ volatile("bkpt #0");
+#endif
+        // for hardware test, do literally nothing
+    }
 }
