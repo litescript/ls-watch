@@ -15,6 +15,9 @@
 #define ST7789_CMD_RASET 0x2Bu
 #define ST7789_CMD_RAMWR 0x2Cu
 
+#define INVON 0x21u
+#define INVOFF 0x20u
+
 #define DC_PIN 18
 #define CS_PIN 25
 #define RESET_PIN 26
@@ -88,6 +91,8 @@ void display_init(void) {
 
     // enable the display and its illumination
     display_begin();
+    display_write_command(
+        INVON); // INVON = 0x21, enable color inversion on display
     display_write_command(
         ST7789_CMD_DISPON); // 0x29: turn the display output on
     display_end();
