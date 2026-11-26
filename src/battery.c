@@ -69,7 +69,7 @@ uint16_t battery_read_mv(void) {
         // you guessed it
     }
 
-    if (battery_sample < 0) {
+    if (battery_sample <= 0) {
         return 0;
     }
 

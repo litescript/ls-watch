@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 /* main.c */
+#include "battery.h"
 #include "display.h"
 #include "font.h"
 
@@ -18,13 +19,24 @@
 #define CLOCK_X 20u
 #define CLOCK_Y 20u
 #define DISP_SCALE 2u
+#define BATTERY_X 100u
+#define BATTERY_Y 100u
+#define BATTERY_SCALE 3u
 
 volatile uint32_t initialized_value = 0xABADBABE;
 volatile uint32_t zeroed_value;
 
 int main(void) {
     rtc_init();
+
+#ifndef EMULATOR
+    battery_init();
+    uint8_t last_check_seconds = 99u;
+    uint16_t battery_mv;
+#endif
+
     uint32_t previous_ticks = rtc_get_ticks();
+
 #ifdef EMULATOR
     // make sure our RAM contains what we want
     if (initialized_value != 0xABADBABE || zeroed_value != 0) {
@@ -83,5 +95,17 @@ int main(void) {
                                  DISP_SCALE);
             dis_clock.hours = sys_clock.hours;
         }
+
+#ifndef EMULATOR
+        if (sys_clock.seconds % 5 == 0u &&
+            last_check_seconds != sys_clock.seconds) {
+            last_check_seconds = sys_clock.seconds;
+            battery_mv = battery_read_mv();
+            display_fill_rect(BATTERY_X, BATTERY_Y, DISPLAY_WIDTH - BATTERY_X,
+                              7 * BATTERY_SCALE, BLACK);
+            font_draw_uint(BATTERY_X, BATTERY_Y, (uint32_t)battery_mv, YELLOW,
+                           BATTERY_SCALE);
+        }
+#endif
     }
 }
