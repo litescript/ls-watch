@@ -33,13 +33,13 @@
 #define SAADC_RESULT_MAXCNT                                                    \
     (*(volatile uint32_t *)(SAADC_BASE + 0x630u)) // number of 16-bit samples
 
-#define SAADC_CONFIG_TACQ_POS 16u    // we want value 5u, 40 microseconds
-#define SAADC_CONFIG_GAIN_POS 24u;   // we want value 0u, 1/6
-#define SAADC_CONFIG_REFSEL_POS 12u; // we want value 0u, internal reference
-#define SAADC_CONFIG_MODE_POS 20u;   // we want value 0u, single-ended
+#define SAADC_CONFIG_TACQ_POS 16u   // we want value 5u, 40 microseconds
+#define SAADC_CONFIG_GAIN_POS 8u    // we want value 0u, 1/6
+#define SAADC_CONFIG_REFSEL_POS 12u // we want value 0u, internal reference
+#define SAADC_CONFIG_MODE_POS 20u   // we want value 0u, single-ended
 
 static int16_t battery_sample;
-static bool saadc_healthy = true;
+static BatteryStatus battery_status = BATTERY_OK;
 
 void battery_init(void) {
     SAADC_CH0_PSELP = 8u;
@@ -48,6 +48,11 @@ void battery_init(void) {
     SAADC_ENABLE = 1u;
     SAADC_RESULT_PTR = (uintptr_t)&battery_sample;
     SAADC_RESULT_MAXCNT = 1u; // collect 1 sample
+    battery_status = BATTERY_OK;
+}
+
+BatteryStatus get_battery_status(void) {
+    return battery_status;
 }
 
 static bool saadc_stop(void) {
@@ -61,7 +66,7 @@ static bool saadc_stop(void) {
         }
     }
     if (SAADC_EVENTS_STOPPED == 0u) {
-        saadc_healthy = false;
+        battery_status = BATTERY_ERR_STOP_TIMEOUT;
         return false;
     }
 
@@ -69,7 +74,7 @@ static bool saadc_stop(void) {
 }
 
 uint16_t battery_read_mv(void) {
-    if (!saadc_healthy) {
+    if (battery_status == BATTERY_ERR_STOP_TIMEOUT) {
         return 0;
     }
 
@@ -88,6 +93,7 @@ uint16_t battery_read_mv(void) {
     }
 
     if (SAADC_EVENTS_STARTED == 0u) {
+        battery_status = BATTERY_ERR_START_TIMEOUT;
         bool abort = saadc_stop();
         if (!abort) {
             // uh oh
@@ -108,6 +114,7 @@ uint16_t battery_read_mv(void) {
     }
 
     if (SAADC_EVENTS_END == 0u) {
+        battery_status = BATTERY_ERR_SAMPLE_TIMEOUT;
         bool abort = saadc_stop();
         if (!abort) {
             // uh oh
@@ -117,13 +124,16 @@ uint16_t battery_read_mv(void) {
 
     bool stopped = saadc_stop();
     if (!stopped) {
+        // uh oh
         return 0;
     }
 
     if (battery_sample <= 0) {
+        battery_status = BATTERY_ERR_INVALID_SAMPLE;
         return 0;
     }
 
     int32_t battery_mv_reading = ((int32_t)battery_sample * 7200) / 4096;
+    battery_status = BATTERY_OK;
     return (uint16_t)battery_mv_reading;
 }
