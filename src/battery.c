@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MPL-2.0
 /* battery.c */
 #include "battery.h"
+#include "rtc.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 #define SAADC_BASE 0x40007000u
@@ -47,26 +49,69 @@ void battery_init(void) {
     SAADC_RESULT_MAXCNT = 1u; // collect 1 sample
 }
 
+static bool saadc_stop(void) {
+    SAADC_EVENTS_STOPPED = 0u;
+    uint32_t current_ticks = rtc_get_ticks();
+    SAADC_TASKS_STOP = 1u;
+    while (SAADC_EVENTS_STOPPED == 0u) {
+        uint32_t elapsed = (rtc_get_ticks() - current_ticks) & 0xFFFFFFu;
+        if (elapsed >= 8u) {
+            break;
+        }
+    }
+    if (SAADC_EVENTS_STOPPED == 0u) {
+        return false;
+    }
+
+    return true;
+}
+
 uint16_t battery_read_mv(void) {
     SAADC_EVENTS_STARTED = 0u;
+
+    uint32_t current_ticks = rtc_get_ticks();
+
     SAADC_TASKS_START = 1u;
 
     while (SAADC_EVENTS_STARTED == 0u) {
         // wait for hardware
+        uint32_t elapsed = (rtc_get_ticks() - current_ticks) & 0xFFFFFFu;
+        if (elapsed >= 8u) {
+            break;
+        }
+    }
+
+    if (SAADC_EVENTS_STARTED == 0u) {
+        bool abort = saadc_stop();
+        if (!abort) {
+            // uh oh
+        }
+        return 0;
     }
 
     SAADC_EVENTS_END = 0u;
+    current_ticks = rtc_get_ticks();
     SAADC_TASKS_SAMPLE = 1u;
 
     while (SAADC_EVENTS_END == 0u) {
         // once again wait for hardware
+        uint32_t elapsed = (rtc_get_ticks() - current_ticks) & 0xFFFFFFu;
+        if (elapsed >= 8u) {
+            break;
+        }
     }
 
-    SAADC_EVENTS_STOPPED = 0u;
-    SAADC_TASKS_STOP = 1u;
+    if (SAADC_EVENTS_END == 0u) {
+        bool abort = saadc_stop();
+        if (!abort) {
+            // uh oh
+        }
+        return 0;
+    }
 
-    while (SAADC_EVENTS_STOPPED == 0u) {
-        // you guessed it
+    bool stopped = saadc_stop();
+    if (!stopped) {
+        return 0;
     }
 
     if (battery_sample <= 0) {
