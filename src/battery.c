@@ -39,6 +39,7 @@
 #define SAADC_CONFIG_MODE_POS 20u;   // we want value 0u, single-ended
 
 static int16_t battery_sample;
+static bool saadc_healthy = true;
 
 void battery_init(void) {
     SAADC_CH0_PSELP = 8u;
@@ -60,6 +61,7 @@ static bool saadc_stop(void) {
         }
     }
     if (SAADC_EVENTS_STOPPED == 0u) {
+        saadc_healthy = false;
         return false;
     }
 
@@ -67,6 +69,10 @@ static bool saadc_stop(void) {
 }
 
 uint16_t battery_read_mv(void) {
+    if (!saadc_healthy) {
+        return 0;
+    }
+
     SAADC_EVENTS_STARTED = 0u;
 
     uint32_t current_ticks = rtc_get_ticks();
