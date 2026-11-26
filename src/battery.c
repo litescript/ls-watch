@@ -38,6 +38,10 @@
 #define SAADC_CONFIG_REFSEL_POS 12u // we want value 0u, internal reference
 #define SAADC_CONFIG_MODE_POS 20u   // we want value 0u, single-ended
 
+// plausible battery mV bounds
+#define BATTERY_MIN_VALID_MV 2500
+#define BATTERY_MAX_VALID_MV 4300
+
 static int16_t battery_sample;
 static BatteryStatus battery_status = BATTERY_OK;
 
@@ -79,9 +83,7 @@ uint16_t battery_read_mv(void) {
     }
 
     SAADC_EVENTS_STARTED = 0u;
-
     uint32_t current_ticks = rtc_get_ticks();
-
     SAADC_TASKS_START = 1u;
 
     while (SAADC_EVENTS_STARTED == 0u) {
@@ -134,6 +136,33 @@ uint16_t battery_read_mv(void) {
     }
 
     int32_t battery_mv_reading = ((int32_t)battery_sample * 7200) / 4096;
+    if (battery_mv_reading > BATTERY_MAX_VALID_MV ||
+        battery_mv_reading < BATTERY_MIN_VALID_MV) {
+        battery_status = BATTERY_ERR_INVALID_SAMPLE;
+        return 0;
+    }
     battery_status = BATTERY_OK;
     return (uint16_t)battery_mv_reading;
+}
+
+uint16_t averaged_battery_reading(uint8_t times) {
+    if (times == 0u) {
+        return 0u;
+    }
+    uint32_t reading_total = 0u;
+    uint16_t failed_readings = 0u;
+    for (uint16_t i = 0; i < times; i++) {
+        uint16_t curr_reading;
+        if ((curr_reading = battery_read_mv()) > 0) {
+            reading_total += curr_reading;
+        } else {
+            failed_readings++;
+        }
+        if (get_battery_status() == BATTERY_ERR_STOP_TIMEOUT) {
+            return 0;
+        }
+    }
+    return (times > failed_readings)
+               ? (uint16_t)(reading_total / (times - failed_readings))
+               : 0u;
 }

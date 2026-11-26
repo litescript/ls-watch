@@ -16,5 +16,6 @@ typedef enum {
 void battery_init(void);
 BatteryStatus get_battery_status(void);
 uint16_t battery_read_mv(void);
+uint16_t averaged_battery_reading(uint8_t times);
 
 #endif

@@ -9,6 +9,7 @@
 #endif
 
 #include "rtc.h"
+#include <stdbool.h>
 #include <stdint.h>
 
 #define WHITE 0xFFFFu
@@ -33,6 +34,8 @@ int main(void) {
     battery_init();
     uint8_t last_check_seconds = 99u;
     uint16_t battery_mv;
+    uint16_t last_battery_mv = UINT16_MAX;
+    bool battery_err_displayed = false;
 #endif
 
     uint32_t previous_ticks = rtc_get_ticks();
@@ -100,11 +103,26 @@ int main(void) {
         if (sys_clock.seconds % 5 == 0u &&
             last_check_seconds != sys_clock.seconds) {
             last_check_seconds = sys_clock.seconds;
-            battery_mv = battery_read_mv();
-            display_fill_rect(BATTERY_X, BATTERY_Y, DISPLAY_WIDTH - BATTERY_X,
-                              7 * BATTERY_SCALE, BLACK);
-            font_draw_uint(BATTERY_X, BATTERY_Y, (uint32_t)battery_mv, YELLOW,
-                           BATTERY_SCALE);
+            battery_mv = averaged_battery_reading(8u);
+            if (battery_mv == 0u) {
+                if (!battery_err_displayed) {
+                    display_fill_rect(BATTERY_X, BATTERY_Y,
+                                      DISPLAY_WIDTH - BATTERY_X,
+                                      7 * BATTERY_SCALE, BLACK);
+                    font_draw_string(BATTERY_X, BATTERY_Y, "ERR", YELLOW, 3u);
+                    battery_err_displayed = true;
+                }
+            } else {
+                if (battery_err_displayed || battery_mv != last_battery_mv) {
+                    display_fill_rect(BATTERY_X, BATTERY_Y,
+                                      DISPLAY_WIDTH - BATTERY_X,
+                                      7 * BATTERY_SCALE, BLACK);
+                    font_draw_uint(BATTERY_X, BATTERY_Y, (uint32_t)battery_mv,
+                                   YELLOW, BATTERY_SCALE);
+                    battery_err_displayed = false;
+                }
+            }
+            last_battery_mv = battery_mv;
         }
 #endif
     }
